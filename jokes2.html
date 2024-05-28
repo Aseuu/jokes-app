@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joke App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #joke-container {
+            margin-top: 20px;
+            white-space: pre-wrap; /* Preserve whitespace for formatted display */
+        }
+    </style>
+</head>
+<body>
+    <h1>Get a Joke</h1>
+    <form id="joke-form">
+        <label for="jokeType">Select joke type:</label>
+        <select id="jokeType" name="jokeType">
+            <option value="single">Single</option>
+            <option value="twopart">Two Part</option>
+        </select>
+        <button type="submit">Get Joke</button>
+    </form>
+    <div id="joke-container"></div>
+
+    <script>
+        document.getElementById('joke-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const jokeType = document.getElementById('jokeType').value;
+            const url = `https://v2.jokeapi.dev/joke/any?type=${jokeType}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const jokeContainer = document.getElementById('joke-container');
+                    jokeContainer.innerHTML = '';
+
+                    if (jokeType === 'single') {
+                        const joke = data.joke;
+                        jokeContainer.textContent = joke;
+                    } else {
+                        const jokeP1 = data.setup;
+                        const jokeP2 = data.delivery;
+                        jokeContainer.innerHTML = `${jokeP1}<br>${jokeP2}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching joke:', error);
+                    document.getElementById('joke-container').textContent = 'Error retrieving joke.';
+                });
+        });
+    </script>
+</body>
+</html>
